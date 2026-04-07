@@ -3,78 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Corporativo</title>
+    <title>Brochure Corporativo</title>
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/lib/turn.min.js"></script>
 
     <style>
-        body { margin: 0; background: #1a1a1a; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: white; }
-        .controls { margin-bottom: 20px; }
-        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 0 5px; }
-        #flipbook { width: 800px; height: 600px; margin: 0 auto; display: none; }
-        .page { width: 400px; height: 600px; background: white; }
-        .page img { width: 100%; height: 100%; display: block; object-fit: contain; }
-        #msg { margin-top: 20px; color: #aaa; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1e1e1e; /* Fondo oscuro profesional */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-        /* Ajuste para pantallas pequeñas */
-        @media (max-width: 820px) {
-            #flipbook { width: 100% !important; height: auto !important; }
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        button:hover {
+            background: #005fa3;
+            transform: translateY(-2px);
+        }
+
+        /* Contenedor del Libro */
+        #canvas {
+            width: 900px;
+            height: 600px;
+            position: relative;
+        }
+
+        #flipbook {
+            display: none; /* Se muestra al cargar */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .page {
+            background: white;
+            width: 450px;
+            height: 600px;
+        }
+
+        .page img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: fill; /* Importante para que ocupe toda la página como un libro real */
+        }
+
+        #loading-status {
+            color: #aaa;
+            font-size: 14px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
     <div class="controls">
-        <button id="prevBtn">Anterior</button>
-        <button id="nextBtn">Siguiente</button>
+        <button id="prevBtn">← Anterior</button>
+        <button id="nextBtn">Siguiente →</button>
     </div>
 
-    <div id="flipbook">
-        <div class="page"><img src="PORTADA.png"></div>
-        <div class="page"><img src="SERVICIOS.png"></div>
-        <div class="page"><img src="NUESTRA EMPRESA.png"></div>
-        <div class="page"><img src="MISION Y VISION.png"></div>
-        <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
-        <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
-        <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
-        <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
-        <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
-        <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
-        <div class="page"><img src="GALERIA.png"></div>
-        <div class="page"><img src="CONTACTO.png"></div>
+    <div id="canvas">
+        <div id="flipbook">
+            <div class="page"><img src="PORTADA.png"></div>
+            <div class="page"><img src="SERVICIOS.png"></div>
+            <div class="page"><img src="NUESTRA EMPRESA.png"></div>
+            <div class="page"><img src="MISION Y VISION.png"></div>
+            <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
+            <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
+            <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
+            <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
+            <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
+            <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
+            <div class="page"><img src="GALERIA.png"></div>
+            <div class="page"><img src="CONTACTO.png"></div>
+        </div>
     </div>
 
-    <div id="msg">Iniciando catálogo...</div>
+    <div id="loading-status">Cargando Brochure...</div>
 
-    <script type="text/javascript">
-        $(window).on('load', function() {
-            try {
-                // Intentamos inicializar el flipbook
-                $("#flipbook").show().turn({
-                    width: 800,
-                    height: 600,
-                    autoCenter: true,
-                    gradients: true,
-                    acceleration: true,
-                    elevation: 50
-                });
-                $("#msg").text("Usa las flechas o los botones para navegar");
-            } catch (e) {
-                $("#msg").html("Error al iniciar el catálogo. <br> Revisa que los nombres de las imágenes sean correctos.");
-                console.error("Turn.js error:", e);
-            }
+<script type="text/javascript">
+    $(window).on('load', function() {
+        const book = $("#flipbook");
 
-            // Configuración de botones
-            $("#prevBtn").click(function() { $("#flipbook").turn("previous"); });
-            $("#nextBtn").click(function() { $("#flipbook").turn("next"); });
-            
-            // Teclado
-            $(window).bind('keydown', function(e){
-                if (e.keyCode == 37) $("#flipbook").turn("previous");
-                else if (e.keyCode == 39) $("#flipbook").turn("next");
+        // Intentar inicializar con manejo de errores
+        try {
+            book.show().turn({
+                width: 900,
+                height: 600,
+                autoCenter: true,
+                duration: 1000,
+                acceleration: true,
+                gradients: true,
+                elevation: 50
             });
+            $("#loading-status").text("Usa las flechas para navegar");
+        } catch (e) {
+            $("#loading-status").html("<span style='color:red'>Error al cargar el efecto. Intenta actualizar la página.</span>");
+            console.error(e);
+        }
+
+        // Navegación
+        $("#prevBtn").click(function() { book.turn("previous"); });
+        $("#nextBtn").click(function() { book.turn("next"); });
+
+        $(window).bind('keydown', function(e){
+            if (e.keyCode == 37) book.turn('previous');
+            else if (e.keyCode == 39) book.turn('next');
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
