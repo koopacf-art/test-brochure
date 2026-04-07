@@ -2,17 +2,25 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo Corporativo - Final</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Corporativo</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
+
     <style>
-        body { margin: 0; background: #1a1a1a; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: white; }
-        .controls { margin: 20px 0; z-index: 1000; }
+        body { margin: 0; background: #1a1a1a; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: white; }
+        .controls { margin-bottom: 20px; }
         button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 0 5px; }
-        #flipbook-container { width: 800px; height: 600px; position: relative; margin-top: 20px; }
-        #flipbook { width: 800px; height: 600px; display: none; }
+        #flipbook { width: 800px; height: 600px; margin: 0 auto; display: none; }
         .page { width: 400px; height: 600px; background: white; }
         .page img { width: 100%; height: 100%; display: block; object-fit: contain; }
-        #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        #msg { margin-top: 20px; color: #aaa; }
+
+        /* Ajuste para pantallas pequeñas */
+        @media (max-width: 820px) {
+            #flipbook { width: 100% !important; height: auto !important; }
+        }
     </style>
 </head>
 <body>
@@ -22,50 +30,50 @@
         <button id="nextBtn">Siguiente</button>
     </div>
 
-    <div id="flipbook-container">
-        <div id="loading">Cargando componentes...</div>
-        <div id="flipbook">
-            <div class="page"><img src="PORTADA.png"></div>
-            <div class="page"><img src="SERVICIOS.png"></div>
-            <div class="page"><img src="NUESTRA EMPRESA.png"></div>
-            <div class="page"><img src="MISION Y VISION.png"></div>
-            <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
-            <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
-            <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
-            <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
-            <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
-            <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
-            <div class="page"><img src="GALERIA.png"></div>
-            <div class="page"><img src="CONTACTO.png"></div>
-        </div>
+    <div id="flipbook">
+        <div class="page"><img src="PORTADA.png"></div>
+        <div class="page"><img src="SERVICIOS.png"></div>
+        <div class="page"><img src="NUESTRA EMPRESA.png"></div>
+        <div class="page"><img src="MISION Y VISION.png"></div>
+        <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
+        <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
+        <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
+        <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
+        <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
+        <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
+        <div class="page"><img src="GALERIA.png"></div>
+        <div class="page"><img src="CONTACTO.png"></div>
     </div>
 
+    <div id="msg">Iniciando catálogo...</div>
+
     <script type="text/javascript">
-        /* Turn.js 4.1.0 | (c) 2012 Emmanuel Garcia | turnjs.com */
-        (function(f){var a,n={bc:window.navigator.userAgent.indexOf("MSIE")!=-1,css3d:function(){var a=document.createElement("div");return"WebkitPerspective"in a.style||"MozPerspective"in a.style||"msPerspective"in a.style||"OPerspective"in a.style||"perspective"in a.style}(),f:function(a,b,c){var d=["Webkit","Moz","ms","O",""];if(b)for(var e=0;e<d.length;e++)if(d[e]+b in a.style)return d[e]+b;return c},k:function(a,b,c){var d=["Webkit","Moz","ms","O",""];if(b)for(var e=0;e<d.length;e++){if(d[e]+b in a.style)return a.style[d[e]+b]=c,a.style[d[e]+b]}}};
-        // (Nota: Código interno de la librería omitido por brevedad en la explicación, pero incluido funcionalmente abajo)
-    </script>
-    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/lib/turn.min.js"></script>
-
-    <script>
         $(window).on('load', function() {
-            setTimeout(function(){
-                if (typeof $().turn === "function") {
-                    $('#loading').hide();
-                    $('#flipbook').show().turn({
-                        width: 800,
-                        height: 600,
-                        autoCenter: true,
-                        gradients: true,
-                        acceleration: true
-                    });
-                } else {
-                    $('#loading').html("Error crítico: Por favor, usa un navegador moderno como Chrome o Edge.");
-                }
-            }, 500);
+            try {
+                // Intentamos inicializar el flipbook
+                $("#flipbook").show().turn({
+                    width: 800,
+                    height: 600,
+                    autoCenter: true,
+                    gradients: true,
+                    acceleration: true,
+                    elevation: 50
+                });
+                $("#msg").text("Usa las flechas o los botones para navegar");
+            } catch (e) {
+                $("#msg").html("Error al iniciar el catálogo. <br> Revisa que los nombres de las imágenes sean correctos.");
+                console.error("Turn.js error:", e);
+            }
 
-            $("#prevBtn").click(function() { $('#flipbook').turn("previous"); });
-            $("#nextBtn").click(function() { $('#flipbook').turn("next"); });
+            // Configuración de botones
+            $("#prevBtn").click(function() { $("#flipbook").turn("previous"); });
+            $("#nextBtn").click(function() { $("#flipbook").turn("next"); });
+            
+            // Teclado
+            $(window).bind('keydown', function(e){
+                if (e.keyCode == 37) $("#flipbook").turn("previous");
+                else if (e.keyCode == 39) $("#flipbook").turn("next");
+            });
         });
     </script>
 </body>
