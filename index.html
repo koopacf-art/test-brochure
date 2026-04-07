@@ -2,11 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Corporativo</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+    <script src="https://rawcdn.githack.com/blasten/turn.js/master/lib/turn.min.js"></script>
 
     <style>
         body {
@@ -16,32 +15,34 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            overflow-x: hidden;
+            color: white;
         }
 
-        .controls {
-            margin-bottom: 20px;
-            z-index: 100;
-        }
-
+        .controls { margin: 20px 0; }
+        
         button {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: #3498db;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            margin: 0 5px;
         }
 
-        /* Contenedor fijo para que no se vea como en tu foto */
+        /* Contenedor con tamaño real del libro */
+        #flipbook-container {
+            width: 800px;
+            height: 600px;
+            position: relative;
+        }
+
         #flipbook {
             width: 800px;
             height: 600px;
-            visibility: hidden; /* Se oculta hasta que Turn.js esté listo */
+            display: none; /* Se oculta hasta que Turn.js lo active */
         }
 
         .page {
@@ -54,13 +55,14 @@
             width: 100%;
             height: 100%;
             display: block;
-            object-fit: contain; /* Para que la imagen no se corte */
-            background: white;
+            object-fit: contain; /* Evita que la imagen se estire */
         }
 
-        #page-label {
-            color: #bdc3c7;
-            margin-top: 15px;
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -71,56 +73,45 @@
         <button id="nextBtn">Siguiente</button>
     </div>
 
-    <div id="flipbook">
-        <div class="page"><img src="PORTADA.png"></div>
-        <div class="page"><img src="SERVICIOS.png"></div>
-        <div class="page"><img src="NUESTRA EMPRESA.png"></div>
-        <div class="page"><img src="MISION Y VISION.png"></div>
-        <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
-        <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
-        <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
-        <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
-        <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
-        <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
-        <div class="page"><img src="GALERIA.png"></div>
-        <div class="page"><img src="CONTACTO.png"></div>
+    <div id="flipbook-container">
+        <div id="loading">Iniciando Flipbook...</div>
+        
+        <div id="flipbook">
+            <div class="page"><img src="PORTADA.png"></div>
+            <div class="page"><img src="SERVICIOS.png"></div>
+            <div class="page"><img src="NUESTRA EMPRESA.png"></div>
+            <div class="page"><img src="MISION Y VISION.png"></div>
+            <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
+            <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
+            <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
+            <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
+            <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
+            <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
+            <div class="page"><img src="GALERIA.png"></div>
+            <div class="page"><img src="CONTACTO.png"></div>
+        </div>
     </div>
 
-    <div id="page-label">Cargando libro...</div>
-
-<script>
-    $(window).on('load', function() {
-        var flipbook = $("#flipbook");
-
-        // Hacer visible y ejecutar turn.js
-        flipbook.css('visibility', 'visible');
-        
-        flipbook.turn({
-            width: 800,
-            height: 600,
-            autoCenter: true,
-            acceleration: true,
-            gradients: true,
-            elevation: 50,
-            when: {
-                turned: function(e, page) {
-                    $("#page-label").text("Página " + page);
-                }
+    <script>
+        $(window).on('load', function() {
+            // Verificamos si Turn.js cargó correctamente
+            if ($.isFunction($('#flipbook').turn)) {
+                $('#loading').hide();
+                $('#flipbook').show().turn({
+                    width: 800,
+                    height: 600,
+                    autoCenter: true,
+                    acceleration: true,
+                    gradients: true,
+                    elevation: 50
+                });
+            } else {
+                $('#loading').text("Error: No se pudo cargar la librería de movimiento.");
             }
-        });
 
-        // Eventos de botones (Corregidos)
-        $("#prevBtn").on("click", function(e) {
-            e.preventDefault();
-            flipbook.turn("previous");
+            $("#prevBtn").click(function() { $('#flipbook').turn("previous"); });
+            $("#nextBtn").click(function() { $('#flipbook').turn("next"); });
         });
-
-        $("#nextBtn").on("click", function(e) {
-            e.preventDefault();
-            flipbook.turn("next");
-        });
-    });
-</script>
-
+    </script>
 </body>
 </html>
