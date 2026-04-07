@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipbook Corporativo</title>
+    <title>Catálogo Corporativo</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
@@ -11,112 +11,97 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
-            background: #2c3e50; /* Color oscuro para resaltar el libro */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            font-family: sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        .flipbook-viewport {
-            width: 100%;
-            height: 100vh;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .flipbook {
+        .controls {
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        /* Contenedor fijo para que no se vea como en tu foto */
+        #flipbook {
             width: 800px;
             height: 600px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            visibility: hidden; /* Se oculta hasta que Turn.js esté listo */
         }
 
         .page {
             width: 400px;
             height: 600px;
             background: white;
-            overflow: hidden;
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Cambia a 'contain' si no quieres que se recorten */
+            display: block;
+            object-fit: contain; /* Para que la imagen no se corte */
+            background: white;
         }
 
-        /* Controles */
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 15px;
-        }
-
-        button {
-            padding: 10px 25px;
-            font-size: 16px;
-            cursor: pointer;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-
-        button:hover { background: #2980b9; }
-
-        .page-num {
-            color: white;
-            margin-top: 10px;
-        }
-
-        /* Ajuste para móviles */
-        @media (max-width: 850px) {
-            .flipbook { width: 100% !important; height: auto !important; }
-            .page { width: 100% !important; }
+        #page-label {
+            color: #bdc3c7;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-<div class="flipbook-viewport">
     <div class="controls">
         <button id="prevBtn">Anterior</button>
         <button id="nextBtn">Siguiente</button>
     </div>
 
-    <div id="flipbook" class="flipbook">
-        <div class="page"><img src="PORTADA.png" alt="Portada"></div>
-        <div class="page"><img src="SERVICIOS.png" alt="Servicios"></div>
-        <div class="page"><img src="NUESTRA EMPRESA.png" alt="Empresa"></div>
-        <div class="page"><img src="MISION Y VISION.png" alt="Misión"></div>
-        <div class="page"><img src="COMPROMISO CORPORATIVO.png" alt="Compromiso"></div>
-        <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png" alt="Proyectos"></div>
-        <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png" alt="Planos"></div>
-        <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png" alt="Mantenimiento"></div>
-        <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png" alt="Asesorías"></div>
-        <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png" alt="Estudios"></div>
-        <div class="page"><img src="GALERIA.png" alt="Galería"></div>
-        <div class="page"><img src="CONTACTO.png" alt="Contacto"></div>
+    <div id="flipbook">
+        <div class="page"><img src="PORTADA.png"></div>
+        <div class="page"><img src="SERVICIOS.png"></div>
+        <div class="page"><img src="NUESTRA EMPRESA.png"></div>
+        <div class="page"><img src="MISION Y VISION.png"></div>
+        <div class="page"><img src="COMPROMISO CORPORATIVO.png"></div>
+        <div class="page"><img src="AREA NEGOCIO - PROYECTOS ELECTRICOS.png"></div>
+        <div class="page"><img src="AREA NEGOCIO - PLANOS ELECTRICOS.png"></div>
+        <div class="page"><img src="AREA NEGOCIO - MANTEMINIMIENTO ELECTRICO.png"></div>
+        <div class="page"><img src="AREA NEGOCIO ASESORIAS TECNICAS.png"></div>
+        <div class="page"><img src="AREA DE NEGOCIO - ESTUDIOS Y MEDICIONES.png"></div>
+        <div class="page"><img src="GALERIA.png"></div>
+        <div class="page"><img src="CONTACTO.png"></div>
     </div>
 
-    <div class="page-num" id="page-label">Página 1</div>
-</div>
+    <div id="page-label">Cargando libro...</div>
 
 <script>
     $(window).on('load', function() {
-        const book = $("#flipbook");
+        var flipbook = $("#flipbook");
 
-        // Inicialización
-        book.turn({
+        // Hacer visible y ejecutar turn.js
+        flipbook.css('visibility', 'visible');
+        
+        flipbook.turn({
             width: 800,
             height: 600,
             autoCenter: true,
-            duration: 1000,
-            gradients: true,
             acceleration: true,
+            gradients: true,
+            elevation: 50,
             when: {
                 turned: function(e, page) {
                     $("#page-label").text("Página " + page);
@@ -124,19 +109,15 @@
             }
         });
 
-        // Botones
-        $("#prevBtn").click(function() {
-            book.turn("previous");
+        // Eventos de botones (Corregidos)
+        $("#prevBtn").on("click", function(e) {
+            e.preventDefault();
+            flipbook.turn("previous");
         });
 
-        $("#nextBtn").click(function() {
-            book.turn("next");
-        });
-
-        // Flechas teclado
-        $(window).bind('keydown', function(e){
-            if (e.keyCode == 37) book.turn('previous');
-            else if (e.keyCode == 39) book.turn('next');
+        $("#nextBtn").on("click", function(e) {
+            e.preventDefault();
+            flipbook.turn("next");
         });
     });
 </script>
